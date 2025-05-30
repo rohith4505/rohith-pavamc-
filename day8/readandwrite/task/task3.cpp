@@ -8,7 +8,7 @@
 struct Student {
     std::string name;
     int age;
-    std::string grade; 
+    std::string grade;
 };
 
 
@@ -16,7 +16,7 @@ struct Student {
 void addStudent() {
     Student s;
     std::cout << "Enter student name: ";
-    std::cin.ignore(); 
+    std::cin.ignore();
     std::getline(std::cin, s.name);
     std::cout << "Enter student age: ";
     std::cin >> s.age;
@@ -37,7 +37,7 @@ void displayStudents() {
     std::ifstream inFile("students.txt");
     if (inFile.is_open()) {
         std::string line;
-        if (inFile.peek() == EOF) { 
+        if (inFile.peek() == EOF) {
             std::cout << "No students to display. File is empty.\n";
             inFile.close();
             return;
@@ -69,7 +69,7 @@ void searchStudentByName() {
             std::string n;
             int age;
             std::string grade;
-            iss >> n >> age >> grade; 
+            iss >> n >> age >> grade;
 
             if (n == searchName) {
                 std::cout << "Student Found: " << line << std::endl;
@@ -101,7 +101,7 @@ void updateStudentGrade() {
     std::string line;
     bool updated = false;
 
-    
+
     if (inFile.is_open()) {
         while (std::getline(inFile, line)) {
             std::istringstream iss(line);
@@ -115,7 +115,7 @@ void updateStudentGrade() {
         }
         inFile.close();
 
-        
+
         std::ofstream outFile("students.txt");
         if (outFile.is_open()) {
             for (const Student& s : students) {
@@ -137,6 +137,53 @@ void updateStudentGrade() {
 }
 
 
+void updateStudentAge() {
+    std::string name;
+    int newAge;
+    std::cout << "Enter student name to update age: ";
+    std::cin.ignore();
+    std::getline(std::cin, name);
+    std::cout << "Enter new age: ";
+    std::cin >> newAge;
+
+    std::vector<Student> students;
+    std::ifstream inFile("students.txt");
+    std::string line;
+    bool updated = false;
+
+    if (inFile.is_open()) {
+        while (std::getline(inFile, line)) {
+            std::istringstream iss(line);
+            Student s;
+            iss >> s.name >> s.age >> s.grade;
+            if (s.name == name) {
+                s.age = newAge;
+                updated = true;
+            }
+            students.push_back(s);
+        }
+        inFile.close();
+
+        std::ofstream outFile("students.txt");
+        if (outFile.is_open()) {
+            for (const Student& s : students) {
+                outFile << s.name << " " << s.age << " " << s.grade << std::endl;
+            }
+            outFile.close();
+        } else {
+            std::cout << "Unable to open file for writing.\n";
+        }
+
+        if (updated) {
+            std::cout << "Age updated successfully!\n";
+        } else {
+            std::cout << "Student not found.\n";
+        }
+    } else {
+        std::cout << "Unable to open file for reading.\n";
+    }
+}
+
 
 int main() {
     int choice;
@@ -146,7 +193,8 @@ int main() {
         std::cout << "2. Display all students\n";
         std::cout << "3. Search Student by Name\n";
         std::cout << "4. Update Student Grade\n";
-        std::cout << "5. Exit\n";
+        std::cout << "5. Update Student Age\n";
+        std::cout << "6. Exit\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
 
@@ -164,12 +212,15 @@ int main() {
                 updateStudentGrade();
                 break;
             case 5:
+                updateStudentAge();
+                break;
+            case 6: 
                 std::cout << "Exiting...\n";
                 break;
             default:
                 std::cout << "Invalid choice. Try again.\n";
         }
-    } while (choice != 5);
+    } while (choice != 6); 
 
     return 0;
 }
